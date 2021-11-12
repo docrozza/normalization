@@ -25,8 +25,6 @@ class GraphDigestOperator(
 
     private val digester = MessageDigest.getInstance("SHA-256")
 
-//    override fun getBoundVars() : MutableSet<Int> = node.objectVars
-
     override fun getVars() : MutableSet<Int> = node.allVars
 
     override fun accept(visitor: OperatorVisitor) = visitor.visit(this)
@@ -55,19 +53,6 @@ class GraphDigestOperator(
                             digest.update(s.writeLine().encodeToByteArray())
                             digest
                         }
-//                    while (results.hasNext()) {
-//                        checkCanceled()
-//
-//                        val quad = results.next()
-//                        digester.update(StringBuilder()
-//                            .withValue(quad.x)
-//                            .withValue(quad.y)
-//                            .withValue(quad.z)
-//                            .toString()
-//                            .encodeToByteArray())
-//
-//                        count++
-//                    }
                 }
 
             if (count > 0) {
@@ -88,13 +73,4 @@ class GraphDigestOperator(
 
     @Suppress("UNCHECKED_CAST")
     private fun <V : Value> Long.value() = mappings.getValue(this) as V
-
-    private fun StringBuilder.withValue(id: Long) : StringBuilder {
-        when (val value = mappings.getValue(id)) {
-            is IRI -> append("I:$value")
-            is BNode -> append("B:${value.id()}")
-            is Literal -> append("L:${value.datatypeIRI()}:${value.label()}")
-        }
-        return this
-    }
 }
