@@ -9,6 +9,7 @@ repositories {
 
 plugins {
     kotlin("jvm") version "1.5.31"
+    `maven-publish`
     idea
 }
 
@@ -31,6 +32,25 @@ dependencies {
     testApi("com.complexible.stardog:client-embedded:$sdVersion")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url  = uri("https://maven.pkg.github.com/docrozza/normalization")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        create<MavenPublication>("normalization") {
+            from(components["java"])
+        }
+    }
 }
 
 tasks.compileKotlin {
