@@ -36,12 +36,14 @@ abstract class StardogTest {
         val db = AdminConnectionConfiguration.toEmbeddedServer()
             .credentials(ADMIN, ADMIN)
             .connect()
-            .use {
+            .let {
                 if (it.list().contains(DB)) {
                     it.drop(DB)
                 }
 
-                it.newDatabase(DB).set(DatabaseOptions.PRESERVE_BNODE_IDS, true).create()
+                val db = it.newDatabase(DB).set(DatabaseOptions.PRESERVE_BNODE_IDS, true).create()
+                it.close()
+                db
             }
 
         connectionFactory = Supplier { db.connect() }
@@ -51,15 +53,16 @@ abstract class StardogTest {
         AdminConnectionConfiguration.toEmbeddedServer()
             .credentials(ADMIN, ADMIN)
             .connect()
-            .use {
+            .also {
                 if (it.list().contains(DB)) {
                     it.drop(DB)
                 }
             }
+            .close()
     }
 
     protected fun <R> Supplier<Connection>.use(block: (Connection) -> R) : R {
-        return get().use {
+        return get().let {
             try {
                 it.begin()
                 val result = block(it)
@@ -68,6 +71,8 @@ abstract class StardogTest {
             } catch (error: Exception) {
                 it.rollback()
                 throw error
+            } finally {
+                it.close()
             }
         }
     }

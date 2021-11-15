@@ -136,7 +136,10 @@ class GraphDigestTest : StardogTest() {
 
     private fun query(query: String, check: (SelectQueryResult) -> Unit) {
         connectionFactory.use { connection ->
-            connection.select(query).execute().use { check(it) }
+            connection.select(query)
+                .execute()
+                .also { check(it) }
+                .close()
         }
     }
 

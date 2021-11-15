@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.nio.file.Paths
 import java.util.stream.IntStream
 import java.util.stream.Stream
-import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
 class GraphNormalizationTest {
@@ -54,6 +53,7 @@ class GraphNormalizationTest {
 
     private fun lines(testId: String) : String {
         return Paths.get("src/test/resources/normalization", "test$testId-urdna2015.nq")
+            .toFile()
             .readText()
             .replace(Regex("\n\r"), System.lineSeparator())
             .trim()

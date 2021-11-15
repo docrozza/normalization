@@ -1,5 +1,5 @@
 val kotlinVersion = "1.5.31"
-val sdVersion = "7.7.2"
+val sdVersion = "7.7.3"
 val jupiterVersion = "5.8.1"
 
 repositories {
@@ -21,7 +21,8 @@ idea {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8", kotlinVersion))
+    implementation(kotlin("stdlib", kotlinVersion))
+//    implementation(kotlin("stdlib-jdk8", kotlinVersion))
 
     api("com.complexible.stardog:client-http:$sdVersion")
 
@@ -69,6 +70,12 @@ tasks {
 
         stardogHome?.also { systemProperty("stardog.home", it) }
         stardogLibs?.also { systemProperty("java.library.path", it) }
+    }
+
+    kotlin {
+        jvmToolchain {
+            (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(11))
+        }
     }
 
     java {

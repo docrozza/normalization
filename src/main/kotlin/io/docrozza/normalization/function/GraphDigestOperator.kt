@@ -43,7 +43,7 @@ class GraphDigestOperator(
 
             IteratorBuilder.create<Quad>(reader, IndexOrder.SPO, CountsRequired.No, executionContext.cancellationPoint)
                 .context(context(current))
-                .iterator().use { results ->
+                .iterator().also { results ->
                     results.asSequence()
                         .onEach { checkCanceled() }
                         .map { Values.statement(it.x.value(), it.y.value(), it.z.value()) }
@@ -54,6 +54,7 @@ class GraphDigestOperator(
                             digest
                         }
                 }
+                .close()
 
             if (count > 0) {
                 return extender.extend(current).apply {
